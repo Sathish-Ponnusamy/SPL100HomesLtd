@@ -118,11 +118,14 @@
             position: relative;
             z-index: 2;
         }
-        .connector-line {
-            position: absolute;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            height: 2px;
-            z-index: 1;
+        
+        .workflow-image {
+            width: 100%;
+            max-width: 800px;
+            border-radius: 1rem;
+            margin: 1.5rem auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
     </style>
 </head>
@@ -253,7 +256,7 @@
 
             <div class="glass p-6 md:p-12 rounded-[2.5rem] relative overflow-hidden">
                 <!-- Diagram Container -->
-                <div class="flex flex-col md:flex-row items-center justify-between gap-8 md:gap-4 relative">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-8 md:gap-4 relative mb-20">
                     
                     <!-- Core Strategy -->
                     <div class="w-full md:w-1/4">
@@ -301,8 +304,63 @@
                     </div>
                 </div>
 
-                <!-- Secondary Framework (Attachment Diagram Visualization) -->
-                <div class="mt-16 grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- NEW WORKFLOW SECTIONS -->
+                <div class="space-y-20 border-t border-white/10 pt-16">
+                    <!-- Business Workflow Section -->
+                    <section class="text-center">
+                        <h3 class="text-2xl md:text-3xl font-bold mb-6 flex items-center justify-center">
+                            <span class="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center mr-3 text-sm">01</span>
+                            Business Workflow
+                        </h3>
+                        <div class="glass bg-white/5 p-4 md:p-8 rounded-3xl mb-8">
+                            <img src="https://raw.githubusercontent.com/Sathish-Ponnusamy/SPL100HomesLtd/main/BusinessWorkFlow.png" 
+                                 alt="Business Workflow Diagram" 
+                                 class="workflow-image"
+                                 onerror="this.src='https://placehold.co/800x400/2a1b3d/ffffff?text=Business+Workflow+Diagram'">
+                            
+                            <div class="max-w-3xl mx-auto text-left mt-8 space-y-4">
+                                <p class="text-sm md:text-base leading-relaxed opacity-80">
+                                    Our operational architecture is built upon a continuous feedback loop of property intelligence and acquisition. The <strong>Business Workflow</strong> facilitates a seamless transition from market scanning to tenant placement.
+                                </p>
+                                <ul class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs md:text-sm">
+                                    <li class="flex items-start"><span class="text-purple-400 mr-2">✦</span> Automated Lead Discovery & Vetting</li>
+                                    <li class="flex items-start"><span class="text-purple-400 mr-2">✦</span> Standardized Renovation Protocols</li>
+                                    <li class="flex items-start"><span class="text-purple-400 mr-2">✦</span> Dynamic Tenant Matching Engine</li>
+                                    <li class="flex items-start"><span class="text-purple-400 mr-2">✦</span> Real-time Portfolio Health Monitoring</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Finance Workflow Section -->
+                    <section class="text-center">
+                        <h3 class="text-2xl md:text-3xl font-bold mb-6 flex items-center justify-center">
+                            <span class="w-8 h-8 bg-pink-600 rounded-lg flex items-center justify-center mr-3 text-sm">02</span>
+                            Finance Workflow
+                        </h3>
+                        <div class="glass bg-white/5 p-4 md:p-8 rounded-3xl mb-8">
+                            <img src="https://raw.githubusercontent.com/Sathish-Ponnusamy/SPL100HomesLtd/main/FinanceWorkFlow.png" 
+                                 alt="Finance Workflow Diagram" 
+                                 class="workflow-image"
+                                 onerror="this.src='https://placehold.co/800x400/3d1b2a/ffffff?text=Finance+Workflow+Diagram'">
+                            
+                            <div class="max-w-3xl mx-auto text-left mt-8 space-y-4">
+                                <p class="text-sm md:text-base leading-relaxed opacity-80">
+                                    Strategic capital management is the engine of our growth. The <strong>Finance Workflow</strong> outlines the rigorous funnel through which capital is allocated, leveraged, and reinvested to maintain a high-alpha portfolio.
+                                </p>
+                                <div class="bg-black/20 p-4 rounded-xl border border-white/5">
+                                    <p class="text-xs italic opacity-60 mb-2">Financial Narrative Summary:</p>
+                                    <p class="text-sm">
+                                        Each acquisition follows a strict "Re-Leveraging Cascade"—where initial equity is deployed into high-potential assets, followed by value-add renovations that trigger refinancing events. This recaptured capital is then rolled into subsequent acquisitions, ensuring exponential portfolio expansion with managed risk.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Secondary Framework -->
+                <div class="mt-16 grid grid-cols-1 md:grid-cols-2 gap-8 border-t border-white/10 pt-16">
                     <div class="glass bg-white/5 p-6 rounded-2xl border-white/5">
                         <h4 class="font-bold text-purple-300 mb-4 flex items-center">
                             <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM5.884 6.98a1 1 0 10-1.414-1.414l-.707.707a1 1 0 101.414 1.414l.707-.707zm11.314 0l.707-.707a1 1 0 10-1.414-1.414l-.707.707a1 1 0 101.414 1.414zM5 11a1 1 0 100-2H4a1 1 0 100 2h1zm11 0a1 1 0 100-2h-1a1 1 0 100 2h1zM8.98 14.116a1 1 0 101.414 1.414l.707-.707a1 1 0 10-1.414-1.414l-.707.707zm5.657 0l.707.707a1 1 0 10-1.414-1.414l-.707-.707a1 1 0 101.414 1.414zM11 17a1 1 0 10-2 0v-1a1 1 0 102 0v1z"></path></svg>
