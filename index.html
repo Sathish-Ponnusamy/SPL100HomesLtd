@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPL 100 Homes LTD - AI Glass Portal</title>
+    <!-- Using Tailwind CSS for layout utility -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
+
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --glass-blur: blur(12px);
+            --bg-gradient: linear-gradient(135deg, #1a1c2c 0%, #4a192c 100%);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: background 1s ease;
+            overflow-x: hidden;
+        }
+
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                        box-shadow 0.3s ease,
+                        background 0.3s ease;
+        }
+
+        /* Solid Dropdown Menu - No Glass Effect */
+        .solid-dropdown {
+            background: #1e293b; /* Solid Slate 800 */
+            border: 1px solid #334155;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+        }
+
+        .project-hover:hover {
+            transform: translateY(-8px) scale(1.01);
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .btn-project {
+            transition: all 0.3s ease;
+        }
+        .btn-project:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2), 0 0 15px rgba(255, 255, 255, 0.3);
+            filter: brightness(1.1);
+        }
+
+        .dropdown-menu {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px) scale(0.95);
+            transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+            transform-origin: top;
+        }
+
+        .group:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+
+        .loading-spinner {
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top: 2px solid white;
+            width: 14px;
+            height: 14px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 6px;
+        }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        .tilt-card { perspective: 1000px; }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+<!-- Navigation Bar -->
+<nav class="glass w-full max-w-5xl rounded-2xl px-6 py-4 flex items-center justify-between sticky top-8 z-50">
+    <div class="text-xl font-bold tracking-tight cursor-pointer hover:scale-105 transition-transform" onclick="showDashboard()">SPL 100 Homes LTD</div>
+
+    <ul class="hidden md:flex space-x-8 items-center font-medium">
+        <li><a href="#" onclick="showDashboard()" class="hover:text-purple-200 transition-all">Home</a></li>
+        <li class="relative group">
+            <button class="flex items-center hover:text-purple-200 transition py-2">
+                Properties
+                <svg class="w-4 h-4 ml-1 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            </button>
+            <!-- UPDATED: Removed 'glass' class, added 'solid-dropdown' -->
+            <div class="dropdown-menu absolute top-full left-0 w-64 pt-4">
+                <div class="solid-dropdown rounded-xl overflow-hidden py-2 text-sm">
+                    <a href="#" onclick="showProperty('36 Holling Street')" class="block px-4 py-3 hover:bg-slate-700 transition text-white">36 Holling Street</a>
+                    <a href="#" onclick="showProperty('56 Alma Street')" class="block px-4 py-3 hover:bg-slate-700 transition text-white">56 Alma Street</a>
+                    <div class="p-3 mt-2 bg-slate-900/50 border-t border-slate-700">
+                        <p class="text-[10px] uppercase tracking-widest opacity-50 mb-2 text-slate-400">✨ AI Suggestion</p>
+                        <button onclick="matchProperty()" id="matchBtn" class="text-xs text-purple-400 hover:text-purple-300 font-bold transition">Find my match →</button>
+                    </div>
+                </div>
+            </div>
+        </li>
+        <li><a href="#" onclick="showContact()" class="hover:text-purple-200 transition-all">Contact Us</a></li>
+    </ul>
+
+    <div class="flex space-x-4 items-center">
+        <button class="bg-white text-purple-900 px-5 py-2 rounded-xl text-sm font-bold btn-project shadow-lg">
+            Portal Login
+        </button>
+    </div>
+</nav>
+
+<!-- AI Theme Controller -->
+<div id="themeController" class="mt-12 glass p-4 rounded-xl flex flex-col md:flex-row gap-4 items-center w-full max-w-2xl project-hover">
+    <div class="flex-1 w-full">
+        <label class="text-[10px] uppercase tracking-tighter opacity-60 ml-1 mb-1 block">✨ AI Environment Generator</label>
+        <input id="themeInput" type="text" placeholder="e.g. Luxury Penthouse Night, Modern Suburban Morning..."
+               class="bg-white/10 border border-white/10 rounded-lg px-4 py-2 w-full outline-none focus:ring-2 ring-purple-400 placeholder-white/30 text-sm transition-all">
+    </div>
+    <button onclick="changeTheme()" id="themeBtn" class="whitespace-nowrap bg-purple-600 hover:bg-purple-500 px-6 py-2 h-10 rounded-lg text-sm font-bold flex items-center btn-project self-end">
+        ✨ Set Vibe
+    </button>
+</div>
+
+<!-- Main Content Container -->
+<div id="mainContent" class="w-full flex flex-col items-center">
+    <!-- Hero Section (Default) -->
+    <main id="dashboardView" class="mt-16 text-center max-w-4xl fade-in">
+        <h1 id="heroTitle" class="text-5xl md:text-7xl font-bold mb-6 drop-shadow-lg transition-transform hover:scale-105 duration-700">
+            SPL 100 <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-300">Homes LTD.</span>
+        </h1>
+        <p class="text-lg md:text-xl opacity-80 mb-10 leading-relaxed max-w-2xl mx-auto">
+            Pioneering a consistent and adaptive business model for the next generation of property management.
+        </p>
+
+        <!-- Feature Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+            <div class="tilt-card">
+                <div class="glass p-6 rounded-2xl text-left flex flex-col justify-between h-full project-hover">
+                    <div>
+                        <h3 class="font-bold mb-2">Consistency</h3>
+                        <p id="desc-perf" class="text-sm opacity-70 mb-4">Consistent growth through algorithmic portfolio balancing.</p>
+                    </div>
+                    <button onclick="explainFeature('Portfolio Consistency', 'desc-perf')" class="text-xs font-bold text-purple-300 hover:text-white flex items-center">
+                        ✨ Strategic Expansion
+                    </button>
+                </div>
+            </div>
+
+            <div class="tilt-card">
+                <div class="glass p-6 rounded-2xl text-left flex flex-col justify-between h-full project-hover">
+                    <div>
+                        <h3 class="font-bold mb-2">Market Privacy</h3>
+                        <p id="desc-privacy" class="text-sm opacity-70 mb-4">Secure business models protected by decentralized ledgers.</p>
+                    </div>
+                    <button onclick="explainFeature('Data Privacy', 'desc-privacy')" class="text-xs font-bold text-purple-300 hover:text-white flex items-center">
+                        ✨ Security Insight
+                    </button>
+                </div>
+            </div>
+
+            <div class="tilt-card">
+                <div class="glass p-6 rounded-2xl text-left flex flex-col justify-between h-full project-hover">
+                    <div>
+                        <h3 class="font-bold mb-2">Adaptive Swift</h3>
+                        <p id="desc-ui" class="text-sm opacity-70 mb-4">Shifting business models based on real-time market swift signals.</p>
+                    </div>
+                    <button onclick="explainFeature('Market Adaptive Swift', 'desc-ui')" class="text-xs font-bold text-purple-300 hover:text-white flex items-center">
+                        ✨ Analysis
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Contact View -->
+    <main id="contactView" class="mt-16 text-center max-w-4xl hidden fade-in">
+        <h2 class="text-4xl md:text-5xl font-bold mb-4">Our Leadership</h2>
+        <p class="text-lg opacity-70 mb-12">Founded in 2025 by industry visionaries.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 px-4">
+            <div class="tilt-card">
+                <div class="glass p-8 rounded-3xl text-left project-hover h-full">
+                    <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl mb-6 flex items-center justify-center text-2xl">SP</div>
+                    <h3 class="text-2xl font-bold mb-1">Mr. Sathish Ponnusamy</h3>
+                    <p class="text-purple-300 text-sm font-bold mb-4 uppercase tracking-wider">Founder & Director</p>
+                    <p class="text-sm opacity-70 leading-relaxed">
+                        Leading the strategic direction and operational scaling of SPL 100 Homes LTD since its inception in 2025.
+                    </p>
+                </div>
+            </div>
+
+            <div class="tilt-card">
+                <div class="glass p-8 rounded-3xl text-left project-hover h-full">
+                    <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl mb-6 flex items-center justify-center text-2xl">PS</div>
+                    <h3 class="text-2xl font-bold mb-1">Dr. Punitha Sathish</h3>
+                    <p class="text-purple-300 text-sm font-bold mb-4 uppercase tracking-wider">Founder & Director</p>
+                    <p class="text-sm opacity-70 leading-relaxed">
+                        Driving market research and analytical frameworks to ensure the long-term sustainability of our property portfolios.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-12 glass p-8 rounded-3xl inline-block">
+            <p class="text-sm opacity-80 mb-4">Need to reach out? Our team is available 24/7.</p>
+            <a href="mailto:spl100homesltd@gmail.com" class="text-xl font-bold text-purple-300 hover:text-white transition-colors underline decoration-purple-500 underline-offset-8">
+                spl100homesltd@gmail.com
+            </a>
+        </div>
+    </main>
+
+    <!-- Property Detail View -->
+    <main id="propertyView" class="mt-16 w-full max-w-5xl hidden fade-in">
+        <div class="flex items-center space-x-4 mb-8">
+            <button onclick="showDashboard()" class="glass p-3 rounded-xl hover:bg-white/20 transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <h2 id="propertyTitle" class="text-4xl font-bold">Property Name</h2>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Gallery Section -->
+            <div class="space-y-4">
+                <div class="glass rounded-3xl overflow-hidden aspect-video relative group">
+                    <img id="mainImage" src="" alt="Property Exterior" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
+                        <span class="text-sm font-medium">Main View</span>
+                    </div>
+                </div>
+                <div class="grid grid-cols-3 gap-4" id="thumbnailGrid">
+                    <!-- Thumbnails injected by JS -->
+                </div>
+            </div>
+
+            <!-- Info Section -->
+            <div class="space-y-6">
+                <div class="glass p-8 rounded-3xl h-full flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start mb-6">
+                            <div>
+                                <span class="bg-purple-500/20 text-purple-200 text-xs font-bold px-3 py-1 rounded-full border border-purple-500/30">AVAILABLE NOW</span>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm opacity-60 italic" id="growthLabel">Potential Property</p>
+                                <p class="text-xl font-bold text-green-400" id="growthValue">+10% YOY</p>
+                            </div>
+                        </div>
+                        <p id="propertyDesc" class="text-sm opacity-80 leading-relaxed mb-6">
+                            Description here...
+                        </p>
+                        <div class="grid grid-cols-2 gap-4 text-sm font-medium">
+                            <div id="spec-beds" class="bg-white/5 p-4 rounded-xl border border-white/10">🛏️ - Bedrooms</div>
+                            <div id="spec-baths" class="bg-white/5 p-4 rounded-xl border border-white/10">🛁 - Bathrooms</div>
+                            <div id="spec-garden" class="bg-white/5 p-4 rounded-xl border border-white/10">🪴 Private Garden</div>
+                            <div id="spec-loc" class="bg-white/5 p-4 rounded-xl border border-white/10">📍 Location</div>
+                        </div>
+                    </div>
+                    <div class="mt-8">
+                        <button id="externalLinkBtn" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 py-4 rounded-2xl font-bold btn-project shadow-xl">
+                            View Full Details on Rightmove
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+    const apiKey = "";
+
+    const propertyData = {
+        '36 Holling Street': {
+            description: 'A stunning terraced property located on the historic Holling Street. Featuring modern interiors integrated with classic architecture, this home represents the core SPL 100 philosophy: high-yield growth in established suburban markets.',
+            growthLabel: 'Potential Property',
+            growthValue: '+10% YOY',
+            specs: { beds: '2 Bedrooms', baths: '1 Bathroom', garden: 'Private Garden', loc: 'Stoke-on-Trent' },
+            images: [
+                "https://lid.zoocdn.com/645/430/9b461f32483842be253896504a377759247190e2.jpg",
+                "https://lid.zoocdn.com/645/430/4e6a8d6263543d84877395066917711475519089.jpg",
+                "https://lid.zoocdn.com/645/430/62e0085a86a6428c9b99915893361114.jpg"
+            ],
+            link: 'https://www.rightmove.co.uk/properties/169995938#/?channel=RES_BUY'
+        },
+        '56 Alma Street': {
+            description: 'This prime asset on Alma Street showcases the resilience of the local market. Meticulously maintained and strategically acquired, it serves as a benchmark for consistent rental yield and capital appreciation within the portfolio.',
+            growthLabel: 'Portfolio Asset',
+            growthValue: '+8.5% YOY',
+            specs: { beds: '2 Bedrooms', baths: '1 Bathroom', garden: 'Rear Courtyard', loc: 'Stoke-on-Trent' },
+            images: [
+                "https://media.rightmove.co.uk/dir/116k/115454/145634543/115454_100936004944_IMG_00_0000_max_656x437.jpeg",
+                "https://media.rightmove.co.uk/dir/116k/115454/145634543/115454_100936004944_IMG_01_0000_max_656x437.jpeg",
+                "https://media.rightmove.co.uk/dir/116k/115454/145634543/115454_100936004944_IMG_02_0000_max_656x437.jpeg"
+            ],
+            link: 'https://www.rightmove.co.uk/properties/170029805#/?channel=RES_BUY'
+        }
+    };
+
+    // 3D Projection Interaction
+    function initTilt() {
+        document.querySelectorAll('.tilt-card').forEach(card => {
+            const content = card.querySelector('.glass');
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                const x = (e.clientX - rect.left) / rect.width;
+                const y = (e.clientY - rect.top) / rect.height;
+                const rotateX = (y - 0.5) * 15;
+                const rotateY = (0.5 - x) * 15;
+                content.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-8px) scale(1.02)`;
+            });
+            card.addEventListener('mouseleave', () => {
+                content.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0) scale(1)`;
+            });
+        });
+    }
+    initTilt();
+
+    function showProperty(name) {
+        const data = propertyData[name];
+        if (!data) return;
+
+        document.getElementById('dashboardView').classList.add('hidden');
+        document.getElementById('contactView').classList.add('hidden');
+        document.getElementById('themeController').classList.add('hidden');
+
+        document.getElementById('propertyTitle').innerText = name;
+        document.getElementById('propertyDesc').innerText = data.description;
+        document.getElementById('growthLabel').innerText = data.growthLabel;
+        document.getElementById('growthValue').innerText = data.growthValue;
+
+        document.getElementById('spec-beds').innerText = `🛏️ ${data.specs.beds}`;
+        document.getElementById('spec-baths').innerText = `🛁 ${data.specs.baths}`;
+        document.getElementById('spec-garden').innerText = `🪴 ${data.specs.garden}`;
+        document.getElementById('spec-loc').innerText = `📍 ${data.specs.loc}`;
+
+        document.getElementById('externalLinkBtn').onclick = () => window.open(data.link, '_blank');
+
+        document.getElementById('mainImage').src = data.images[0];
+        const thumbGrid = document.getElementById('thumbnailGrid');
+        thumbGrid.innerHTML = '';
+        data.images.forEach((img) => {
+            const div = document.createElement('div');
+            div.className = 'glass rounded-xl overflow-hidden aspect-square cursor-pointer hover:border-white/50';
+            div.onclick = () => document.getElementById('mainImage').src = img;
+            div.innerHTML = `<img src="${img}" class="w-full h-full object-cover">`;
+            thumbGrid.appendChild(div);
+        });
+
+        document.getElementById('propertyView').classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showContact() {
+        document.getElementById('dashboardView').classList.add('hidden');
+        document.getElementById('propertyView').classList.add('hidden');
+        document.getElementById('themeController').classList.add('hidden');
+        document.getElementById('contactView').classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showDashboard() {
+        document.getElementById('propertyView').classList.add('hidden');
+        document.getElementById('contactView').classList.add('hidden');
+        document.getElementById('dashboardView').classList.remove('hidden');
+        document.getElementById('themeController').classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    async function callGemini(prompt, isJson = false) {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+        const payload = { contents: [{ parts: [{ text: prompt }] }] };
+        if (isJson) payload.generationConfig = { responseMimeType: "application/json" };
+
+        let delay = 1000;
+        for (let i = 0; i < 5; i++) {
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+                return data.candidates?.[0]?.content?.parts?.[0]?.text;
+            } catch (err) {
+                if (i === 4) return null;
+                await new Promise(r => setTimeout(r, delay));
+                delay *= 2;
+            }
+        }
+    }
+
+    async function changeTheme() {
+        const input = document.getElementById('themeInput');
+        const btn = document.getElementById('themeBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="loading-spinner"></span> Calibrating...';
+
+        const prompt = `Generate a CSS linear-gradient and one hex accent color for a professional property management theme: "${input.value || 'modern luxury'}". Return JSON { "gradient": "string", "accent": "hex" }.`;
+
+        const result = await callGemini(prompt, true);
+        if (result) {
+            const theme = JSON.parse(result);
+            document.body.style.setProperty('--bg-gradient', theme.gradient);
+            if(document.querySelector('#heroTitle span')) {
+                document.querySelector('#heroTitle span').style.backgroundImage = `linear-gradient(to right, ${theme.accent}, #ffffff)`;
+            }
+        }
+        btn.disabled = false;
+        btn.innerHTML = '✨ Set Vibe';
+    }
+
+    async function explainFeature(title, elementId) {
+        const target = document.getElementById(elementId);
+        const originalText = target.innerText;
+        target.innerHTML = '<span class="loading-spinner"></span> Analyzing...';
+
+        const prompt = `Act as a high-level business consultant for SPL 100 Homes LTD. Elaborate on the concept of "${title}" based on "${originalText}". Keep it to 20 words or less and very professional.`;
+
+        const result = await callGemini(prompt);
+        target.innerText = result || originalText;
+    }
+
+    async function matchProperty() {
+        const btn = document.getElementById('matchBtn');
+        btn.innerHTML = '<span class="loading-spinner"></span> Consulting AI...';
+
+        const prompt = `Based on a portfolio of properties like 36 Holling Street and 56 Alma Street, suggest one fake luxury property name and a one-sentence reason why it fits a high-growth business model. Format: "Name: Reason".`;
+
+        const result = await callGemini(prompt);
+        if (result) {
+            const [name, reason] = result.split(':');
+            alert(`✨ AI Suggestion:\n\nProperty: ${name.trim()}\nInsight: ${reason.trim()}`);
+        }
+        btn.innerHTML = 'Find my match →';
+    }
+</script>
+</body>
+</html>
