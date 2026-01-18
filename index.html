@@ -107,6 +107,23 @@
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        /* Business Model Diagram Custom Styles */
+        .diagram-node {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 1rem;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+        .connector-line {
+            position: absolute;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            height: 2px;
+            z-index: 1;
+        }
     </style>
 </head>
 <body class="p-4 md:p-8">
@@ -118,6 +135,7 @@
         <!-- Desktop Menu -->
         <ul class="hidden lg:flex space-x-8 items-center font-medium">
             <li><a href="#" onclick="showDashboard()" class="hover:text-purple-200 transition-all">Home</a></li>
+            <li><a href="#" onclick="showBusinessModel()" class="hover:text-purple-200 transition-all">Business Model</a></li>
             <li class="relative group">
                 <button class="flex items-center hover:text-purple-200 transition py-2">
                     Properties
@@ -138,9 +156,8 @@
         </ul>
 
         <div class="flex space-x-2 md:space-x-4 items-center">
-            <!-- Updated Button Label -->
-            <button class="bg-white text-purple-900 px-4 md:px-5 py-2 rounded-xl text-xs md:text-sm font-bold btn-project shadow-lg">
-                Loading...
+            <button id="statusBtn" class="bg-white text-purple-900 px-4 md:px-5 py-2 rounded-xl text-xs md:text-sm font-bold btn-project shadow-lg">
+                Loading
             </button>
             <!-- Mobile Toggle -->
             <button onclick="toggleMobileMenu()" class="lg:hidden glass p-2 rounded-xl">
@@ -151,6 +168,7 @@
         <!-- Mobile Menu Overlay -->
         <div id="mobile-menu" class="hidden fixed inset-0 top-[72px] bg-slate-900/95 backdrop-blur-xl z-[60] flex-col p-6 space-y-6 lg:hidden fade-in">
             <button onclick="showDashboard(); toggleMobileMenu()" class="text-2xl font-bold border-b border-white/10 pb-4 text-left">Home</button>
+            <button onclick="showBusinessModel(); toggleMobileMenu()" class="text-2xl font-bold border-b border-white/10 pb-4 text-left">Business Model</button>
             <div class="space-y-4">
                 <p class="text-xs uppercase tracking-widest opacity-50">Properties</p>
                 <button onclick="showProperty('36 Holling Street'); toggleMobileMenu()" class="block text-xl text-left w-full">36 Holling Street</button>
@@ -226,6 +244,98 @@
             </div>
         </main>
 
+        <!-- Business Model View -->
+        <main id="businessModelView" class="mt-12 md:mt-16 w-full max-w-5xl hidden fade-in px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-5xl font-bold mb-4">Business Model <span class="text-purple-400">Framework</span></h2>
+                <p class="opacity-70">A structural overview of our adaptive property acquisition and management cycle.</p>
+            </div>
+
+            <div class="glass p-6 md:p-12 rounded-[2.5rem] relative overflow-hidden">
+                <!-- Diagram Container -->
+                <div class="flex flex-col md:flex-row items-center justify-between gap-8 md:gap-4 relative">
+                    
+                    <!-- Core Strategy -->
+                    <div class="w-full md:w-1/4">
+                        <div class="diagram-node border-purple-500/40 bg-purple-500/10 project-hover">
+                            <span class="text-[10px] uppercase text-purple-300 font-bold block mb-2">Phase 01</span>
+                            <h4 class="font-bold text-lg mb-2">Strategy Initiation</h4>
+                            <p class="text-[11px] opacity-60">Algorithmic selection based on historical Stoke-on-Trent growth data.</p>
+                        </div>
+                    </div>
+
+                    <!-- Arrow -->
+                    <div class="hidden md:block w-8 h-px bg-gradient-to-r from-purple-500/50 to-pink-500/50"></div>
+
+                    <!-- Acquisition -->
+                    <div class="w-full md:w-1/4">
+                        <div class="diagram-node border-pink-500/40 bg-pink-500/10 project-hover">
+                            <span class="text-[10px] uppercase text-pink-300 font-bold block mb-2">Phase 02</span>
+                            <h4 class="font-bold text-lg mb-2">Acquisition Swift</h4>
+                            <p class="text-[11px] opacity-60">Rapid capital deployment for undervalued residential assets.</p>
+                        </div>
+                    </div>
+
+                    <!-- Arrow -->
+                    <div class="hidden md:block w-8 h-px bg-gradient-to-r from-pink-500/50 to-blue-500/50"></div>
+
+                    <!-- Management -->
+                    <div class="w-full md:w-1/4">
+                        <div class="diagram-node border-blue-500/40 bg-blue-500/10 project-hover">
+                            <span class="text-[10px] uppercase text-blue-300 font-bold block mb-2">Phase 03</span>
+                            <h4 class="font-bold text-lg mb-2">Portfolio Yield</h4>
+                            <p class="text-[11px] opacity-60">Consistent rental management & property maintenance optimization.</p>
+                        </div>
+                    </div>
+
+                    <!-- Arrow -->
+                    <div class="hidden md:block w-8 h-px bg-gradient-to-r from-blue-500/50 to-green-500/50"></div>
+
+                    <!-- Reinvestment -->
+                    <div class="w-full md:w-1/4">
+                        <div class="diagram-node border-green-500/40 bg-green-500/10 project-hover">
+                            <span class="text-[10px] uppercase text-green-300 font-bold block mb-2">Phase 04</span>
+                            <h4 class="font-bold text-lg mb-2">Cycle Scaling</h4>
+                            <p class="text-[11px] opacity-60">Equity leveraging for next-tier expansion and diversification.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Secondary Framework (Attachment Diagram Visualization) -->
+                <div class="mt-16 grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="glass bg-white/5 p-6 rounded-2xl border-white/5">
+                        <h4 class="font-bold text-purple-300 mb-4 flex items-center">
+                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM5.884 6.98a1 1 0 10-1.414-1.414l-.707.707a1 1 0 101.414 1.414l.707-.707zm11.314 0l.707-.707a1 1 0 10-1.414-1.414l-.707.707a1 1 0 101.414 1.414zM5 11a1 1 0 100-2H4a1 1 0 100 2h1zm11 0a1 1 0 100-2h-1a1 1 0 100 2h1zM8.98 14.116a1 1 0 101.414 1.414l.707-.707a1 1 0 10-1.414-1.414l-.707.707zm5.657 0l.707.707a1 1 0 10-1.414-1.414l-.707-.707a1 1 0 101.414 1.414zM11 17a1 1 0 10-2 0v-1a1 1 0 102 0v1z"></path></svg>
+                            Asset Intelligence Diagram
+                        </h4>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center text-sm border-b border-white/10 pb-2">
+                                <span class="opacity-60">Market Entry</span>
+                                <span class="font-bold">Stoke-on-Trent Cluster</span>
+                            </div>
+                            <div class="flex justify-between items-center text-sm border-b border-white/10 pb-2">
+                                <span class="opacity-60">Leverage Ratio</span>
+                                <span class="font-bold text-green-400">Optimized 1:4</span>
+                            </div>
+                            <div class="flex justify-between items-center text-sm border-b border-white/10 pb-2">
+                                <span class="opacity-60">Governance</span>
+                                <span class="font-bold">Decentralized Analysis</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="glass bg-white/5 p-6 rounded-2xl border-white/5 flex flex-col justify-center">
+                        <p class="text-sm italic opacity-80 leading-relaxed">
+                            "Our model focuses on the <strong>'Swift Transition'</strong>—the ability to pivot between accumulation and stabilization phases based on the Real Estate Sentiment Index (RESI)."
+                        </p>
+                        <div class="mt-4 flex items-center">
+                            <div class="w-8 h-8 rounded-full bg-purple-600 mr-3 flex items-center justify-center text-[10px]">AI</div>
+                            <span class="text-xs font-bold uppercase tracking-wider">System insight v2.5</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
         <!-- Contact View -->
         <main id="contactView" class="mt-12 md:mt-16 text-center max-w-4xl hidden fade-in">
             <h2 class="text-3xl md:text-5xl font-bold mb-4">Our Leadership</h2>
@@ -234,7 +344,6 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 px-4">
                 <div class="tilt-card">
                     <div class="glass p-6 md:p-8 rounded-3xl text-left project-hover h-full">
-                        <!-- SWAPPED: SP now uses Blue/Cyan gradient -->
                         <div class="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl mb-6 flex items-center justify-center text-xl md:text-2xl">SP</div>
                         <h3 class="text-xl md:text-2xl font-bold mb-1">Mr. Sathish Ponnusamy</h3>
                         <p class="text-purple-300 text-xs md:text-sm font-bold mb-4 uppercase tracking-wider">Founder & Director</p>
@@ -246,7 +355,6 @@
 
                 <div class="tilt-card">
                     <div class="glass p-6 md:p-8 rounded-3xl text-left project-hover h-full">
-                        <!-- SWAPPED: PS now uses Purple/Pink gradient -->
                         <div class="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl mb-6 flex items-center justify-center text-xl md:text-2xl">PS</div>
                         <h3 class="text-xl md:text-2xl font-bold mb-1">Dr. Punitha Sathish</h3>
                         <p class="text-purple-300 text-xs md:text-sm font-bold mb-4 uppercase tracking-wider">Founder & Director</p>
@@ -346,6 +454,14 @@
             }
         };
 
+        function hideAllViews() {
+            document.getElementById('dashboardView').classList.add('hidden');
+            document.getElementById('contactView').classList.add('hidden');
+            document.getElementById('propertyView').classList.add('hidden');
+            document.getElementById('businessModelView').classList.add('hidden');
+            document.getElementById('themeController').classList.add('hidden');
+        }
+
         function toggleMobileMenu() {
             const menu = document.getElementById('mobile-menu');
             if (menu.classList.contains('hidden')) {
@@ -382,9 +498,7 @@
             const data = propertyData[name];
             if (!data) return;
 
-            document.getElementById('dashboardView').classList.add('hidden');
-            document.getElementById('contactView').classList.add('hidden');
-            document.getElementById('themeController').classList.add('hidden');
+            hideAllViews();
             
             document.getElementById('propertyTitle').innerText = name;
             document.getElementById('propertyDesc').innerText = data.description;
@@ -414,16 +528,19 @@
         }
 
         function showContact() {
-            document.getElementById('dashboardView').classList.add('hidden');
-            document.getElementById('propertyView').classList.add('hidden');
-            document.getElementById('themeController').classList.add('hidden');
+            hideAllViews();
             document.getElementById('contactView').classList.remove('hidden');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        function showBusinessModel() {
+            hideAllViews();
+            document.getElementById('businessModelView').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
         function showDashboard() {
-            document.getElementById('propertyView').classList.add('hidden');
-            document.getElementById('contactView').classList.add('hidden');
+            hideAllViews();
             document.getElementById('dashboardView').classList.remove('hidden');
             document.getElementById('themeController').classList.remove('hidden');
             window.scrollTo({ top: 0, behavior: 'smooth' });
